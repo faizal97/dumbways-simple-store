@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Exception;
+use Illuminate\Http\Request;
+
+class XApiKey
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
+    public function handle(Request $request, Closure $next)
+    {
+        $xApiKey = $request->header('x-api-key');
+
+        if (config('app.x_api_key') != $xApiKey) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'x api key not found',
+            ], 500);
+        }
+
+        return $next($request);
+    }
+}
